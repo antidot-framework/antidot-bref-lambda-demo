@@ -1,14 +1,14 @@
 # Running Antidot Framework in AWS Lambda using Bref
 
-This guide helps you run Antidot framework applications on AWS Lambda using Bref. These instructions are kept up to 
-date to target the latest Symfony version.
+This guide helps you run Antidot framework applications on AWS Lambda using Bref. 
 
 A demo application is available on GitHub at 
 [github.com/antidot-framework/antidot-bref-lambda-demo](https://github.com/antidot-framework/antidot-bref-lambda-demo).
 
 ## Setup
 
-Assuming your are in existing Antidot Framework project, let's install Bref via Composer:
+Assuming your are in existing [Antidot Framework project](https://github.com/antidot-framework/antidot-starter), let's 
+install Bref via Composer:
 
 ```
 composer require mnapoli/bref
