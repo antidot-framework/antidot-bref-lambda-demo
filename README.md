@@ -71,7 +71,7 @@ and the logs are stored in the `config/config.php` and `config/cli-config.php` f
 <?php
 // config/config.php
 $cacheConfig = [
-    'config_cache_path' => 'tmp/cache/config-cache.php',
+    'config_cache_path' => dirname('../tmp/cache') . '/config-cache.php',
 ];
 ...
 ```
@@ -81,7 +81,7 @@ $cacheConfig = [
 // config/cli-config.php
 ...
 $cacheConfig = [
-    'cli_config_cache_path' => 'tmp/cache/cli-config-cache.php',
+    'cli_config_cache_path' => dirname('../tmp/cache') . 'cli-config-cache.php',
 ];
 ...
 ```
