@@ -64,7 +64,7 @@ Outputs:
 
 Now we still have a few modifications to do on the application to make it compatible with AWS Lambda.
 
-Since [the filesystem is readonly](/docs/environment/storage.md) except for `/tmp` we need to customize where the cache 
+Since [the filesystem is readonly](https://bref.sh/docs/environment/storage.html) except for `/tmp` we need to customize where the cache 
 and the logs are stored in the `config/config.php` and `config/cli-config.php` files. 
 
 ```php
@@ -88,7 +88,7 @@ $cacheConfig = [
 
 ## Deploy
 
-Your application is now ready to be deployed. Follow [the deployment guide](/docs/deploy.md#deploying-with-sam).
+Your application is now ready to be deployed. Follow [the deployment guide](https://bref.sh/docs/deploy.html#deploying-with-sam).
 
 ## Console
 
