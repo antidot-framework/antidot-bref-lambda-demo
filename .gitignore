@@ -1,0 +1,12 @@
+/.stack.yaml
+/.phpunit.result.cache
+/composer.lock
+
+/config/autoload/*.local.php
+/config/development.config.php
+
+/vendor
+/tmp
+/var
+
+/.idea
