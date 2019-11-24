@@ -8,7 +8,7 @@ use Zend\ConfigAggregator\ConfigAggregator;
 $config = require __DIR__ . '/config.php';
 $cliConfig['dependencies'] = $config['console']['dependencies'];
 $cacheConfig = [
-    'cli_config_cache_path' => 'tmp/cache/cli-config-cache.php',
+    'cli_config_cache_path' => 'var/cache/cli-config-cache.php',
 ];
 
 return (new ConfigAggregator([
