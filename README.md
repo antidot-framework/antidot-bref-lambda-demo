@@ -14,58 +14,48 @@ install Bref via Composer:
 composer require mnapoli/bref
 ```
 
-Then let's create a `template.yaml` configuration file (at the root of the project) optimized for Antidot Framework:
+Then let's create a `serverless.yml` configuration file (at the root of the project) optimized for Antidot Framework:
 
 ```yaml
-AWSTemplateFormatVersion: '2010-09-09'
-Transform: AWS::Serverless-2016-10-31
+service: bref-demo-antidot
 
-Resources:
-    Website:
-        Type: AWS::Serverless::Function
-        Properties:
-            FunctionName: 'antidot-fw-website'
-            CodeUri: .
-            Handler: public/index.php
-            Timeout: 30 # in seconds (API Gateway has a timeout of 30 seconds)
-            MemorySize: 1024
-            Runtime: provided
-            Layers:
-                - 'arn:aws:lambda:us-east-1:209497400698:layer:php-73-fpm:6'
-            Events:
-                HttpRoot:
-                    Type: Api
-                    Properties:
-                        Path: /
-                        Method: ANY
-                HttpSubPaths:
-                    Type: Api
-                    Properties:
-                        Path: /{proxy+}
-                        Method: ANY
+provider:
+    name: aws
+    region: us-east-1
+    runtime: provided
+    environment:
+        # Your project environment variables
+#        APP_ENV: prod
 
-    Console:
-        Type: AWS::Serverless::Function
-        Properties:
-            FunctionName: 'antidot-fw-console'
-            CodeUri: .
-            Handler: bin/console
-            Timeout: 120 # in seconds
-            Runtime: provided
-            Layers:
-                - 'arn:aws:lambda:us-east-1:209497400698:layer:php-73:6' # PHP
-                - 'arn:aws:lambda:us-east-1:209497400698:layer:console:6' # The "console" layer
+plugins:
+    - ./vendor/bref/bref
 
-Outputs:
-    DemoApi:
-        Description: 'URL of our function in the *Prod* environment'
-        Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/'
+package:
+    exclude:
+        - node_modules/**
+        - tests/**
+
+functions:
+    website:
+        handler: public/index.php
+        timeout: 28 # in seconds (API Gateway has a timeout of 29 seconds)
+        layers:
+            - ${bref:layer.php-73-fpm}
+        events:
+            -   http: 'ANY /'
+            -   http: 'ANY /{proxy+}'
+    console:
+        handler: bin/console
+        timeout: 120 # in seconds
+        layers:
+            - ${bref:layer.php-73} # PHP
+            - ${bref:layer.console} # The "console" layer
 ```
 
 Now we still have a few modifications to do on the application to make it compatible with AWS Lambda.
 
 Since [the filesystem is readonly](https://bref.sh/docs/environment/storage.html) except for `/tmp` we need to customize where the cache 
-and the logs are stored in the `config/config.php` and `config/cli-config.php` files. 
+is stored in the `config/config.php` and `config/cli-config.php` files. 
 
 ```php
 <?php
@@ -88,17 +78,17 @@ $cacheConfig = [
 
 ## Deploy
 
-Your application is now ready to be deployed. Follow [the deployment guide](https://bref.sh/docs/deploy.html#deploying-with-sam).
+Your application is now ready to be deployed. Follow [the deployment guide](/docs/deploy.md).
 
 ## Console
 
-As you may have noticed, we define a function of type "console" in `template.yaml`. That function is using the [Console runtime](/docs/runtimes/console.md), which lets us run the Symfony Console on AWS Lambda.
+As you may have noticed, we define a function of type "console" in `serverless.yml`. That function is using the [Console runtime](/docs/runtimes/console.md), which lets us run the Antidot Framework Console on AWS Lambda.
 
 To use it follow [the "Console" guide](/docs/runtimes/console.md).
 
 ## Logs
 
-We need to override monolog config
+We need to configure Monolog to log into `stderr` as well:
 
 ```yaml
 # config/services/dependencies.prod.yaml
@@ -111,4 +101,18 @@ We need to override monolog config
           level: 400
 ```
 
-The secrets (e.g. database passwords) must however not be committed in this file: define them in the [AWS Console](https://console.aws.amazon.com).
+## Environment variables
+
+You can define your environment variables in `serverless.yml` in the [Globals section](https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst):
+
+```yaml
+Globals:
+    Function:
+        Environment:
+            Variables:
+                APP_ENV: prod
+```
+
+The secrets (e.g. database passwords) must however not be committed in this file.
+
+To learn more about all this, read the [environment variables documentation](/docs/environment/variables.md).
