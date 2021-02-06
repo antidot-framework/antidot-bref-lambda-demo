@@ -2,11 +2,11 @@ service: bref-demo-antidot
 
 provider:
   name: aws
-  region: us-east-1
-  runtime: provided
+  region: eu-west-1
+  runtime: provided.al2
   environment:
     # Antidot Framework environment variables
-    APP_ENV: prod
+#    APP_ENV: prod
 
 plugins:
   - ./vendor/bref/bref
@@ -21,7 +21,8 @@ functions:
     handler: public/index.php
     timeout: 28 # in seconds (API Gateway has a timeout of 29 seconds)
     layers:
-      - ${bref:layer.php-73-fpm}
+#      - ${bref:layer.php-74-fpm}
+      - ${bref:layer.php-80-fpm}
     events:
       -   http: 'ANY /'
       -   http: 'ANY /{proxy+}'
@@ -29,5 +30,6 @@ functions:
     handler: bin/console
     timeout: 120 # in seconds
     layers:
-      - ${bref:layer.php-73} # PHP
+#      - ${bref:layer.php-74} # PHP
+      - ${bref:layer.php-80} # PHP
       - ${bref:layer.console} # The "console" layer
